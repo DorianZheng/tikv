@@ -27,7 +27,7 @@ use tikv::raftstore::store::Config as RaftstoreConfig;
 use tikv::server::config::GrpcCompressionType;
 use tikv::server::Config as ServerConfig;
 use tikv::storage::Config as StorageConfig;
-use tikv::util::config::{ReadableDuration, ReadableSize};
+use tikv::util::config::{CompressionType, ReadableDuration, ReadableSize};
 use tikv::util::security::SecurityConfig;
 
 #[test]
@@ -335,6 +335,12 @@ fn test_serde_custom_tikv_config() {
             disable_auto_compactions: true,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(12),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(12),
+        },
+        titandb: TitanDbConfig {
+            enabled: true,
+            dirname: "/tmp/titandb".to_owned(),
+            min_blob_size: 123,
+            blob_file_compression: CompressionType::Zstd,
         },
     };
     value.raftdb = RaftDbConfig {

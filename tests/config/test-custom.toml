@@ -296,6 +296,12 @@ disable-auto-compactions = true
 soft-pending-compaction-bytes-limit = "12GB"
 hard-pending-compaction-bytes-limit = "12GB"
 
+[rocksdb.titandb]
+enabled = true
+dirname = "/tmp/titandb"
+min-blob-size = 123
+blob-file-compression = "zstd"
+
 [raftdb]
 wal-recovery-mode = 3
 wal-dir = "/var"

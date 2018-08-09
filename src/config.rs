@@ -24,7 +24,7 @@ use std::usize;
 
 use rocksdb::{
     BlockBasedOptions, ColumnFamilyOptions, CompactionPriority, DBCompactionStyle,
-    DBCompressionType, DBOptions, DBRecoveryMode,
+    DBCompressionType, DBOptions, DBRecoveryMode, TitanDBOptions,
 };
 use slog;
 use sys_info;
@@ -40,7 +40,7 @@ use storage::{
     Config as StorageConfig, CF_DEFAULT, CF_LOCK, CF_RAFT, CF_WRITE, DEFAULT_ROCKSDB_SUB_DIR,
 };
 use util::config::{
-    self, compression_type_level_serde, ReadableDuration, ReadableSize, GB, KB, MB,
+    self, compression_type_level_serde, CompressionType, ReadableDuration, ReadableSize, GB, KB, MB,
 };
 use util::properties::{MvccPropertiesCollectorFactory, RangePropertiesCollectorFactory};
 use util::rocksdb::{
@@ -378,6 +378,37 @@ impl RaftCfConfig {
 #[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
 #[serde(default)]
 #[serde(rename_all = "kebab-case")]
+pub struct TitanDbConfig {
+    pub enabled: bool,
+    pub dirname: String,
+    pub min_blob_size: u64,
+    pub blob_file_compression: CompressionType,
+}
+
+impl Default for TitanDbConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            dirname: "".to_owned(),
+            min_blob_size: 4096,
+            blob_file_compression: CompressionType::No,
+        }
+    }
+}
+
+impl TitanDbConfig {
+    fn build_opts(&self) -> TitanDBOptions {
+        let mut opts = TitanDBOptions::new();
+        opts.set_dirname(&self.dirname);
+        opts.set_min_blob_size(self.min_blob_size);
+        opts.set_blob_file_compression(self.blob_file_compression.into());
+        opts
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
+#[serde(default)]
+#[serde(rename_all = "kebab-case")]
 pub struct DbConfig {
     #[serde(with = "config::recovery_mode_serde")]
     pub wal_recovery_mode: DBRecoveryMode,
@@ -407,6 +438,7 @@ pub struct DbConfig {
     pub writecf: WriteCfConfig,
     pub lockcf: LockCfConfig,
     pub raftcf: RaftCfConfig,
+    pub titandb: TitanDbConfig,
 }
 
 impl Default for DbConfig {
@@ -439,6 +471,7 @@ impl Default for DbConfig {
             writecf: WriteCfConfig::default(),
             lockcf: LockCfConfig::default(),
             raftcf: RaftCfConfig::default(),
+            titandb: TitanDbConfig::default(),
         }
     }
 }
@@ -484,6 +517,10 @@ impl DbConfig {
         );
         opts.enable_pipelined_write(self.enable_pipelined_write);
         opts.add_event_listener(EventListener::new("kv"));
+
+        if self.titandb.enabled {
+            opts.set_titandb_options(&self.titandb.build_opts());
+        }
         opts
     }
 

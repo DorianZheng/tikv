@@ -20,7 +20,8 @@ use std::u64;
 
 use raftstore::store::keys;
 use rocksdb::{
-    DBEntryType, TablePropertiesCollector, TablePropertiesCollectorFactory, UserCollectedProperties,
+    DBEntryType, TablePropertiesCollector, TablePropertiesCollectorFactory, TitanBlobIndex,
+    UserCollectedProperties,
 };
 use storage::mvcc::{Write, WriteType};
 use storage::types::Key;
@@ -615,15 +616,19 @@ impl RangePropertiesCollector {
 
 impl TablePropertiesCollector for RangePropertiesCollector {
     fn add(&mut self, key: &[u8], value: &[u8], entry_type: DBEntryType, _: u64, _: u64) {
-        if entry_type != DBEntryType::Put {
-            return;
-        }
+        let value_size = match entry_type {
+            DBEntryType::Put => value.len() as u64,
+            DBEntryType::BlobIndex => match TitanBlobIndex::decode_from(value) {
+                Ok(index) => index.blob_size,
+                Err(_) => return,
+            },
+            _ => return,
+        };
 
         // keys
         self.cur_offsets.keys += 1;
         // size
-        let size = key.len() + value.len();
-        self.cur_offsets.size += size as u64;
+        self.cur_offsets.size += key.len() as u64 + value_size;
         // Add the start key for convenience.
         if self.last_key.is_empty()
             || self.size_in_last_range() >= PROP_SIZE_INDEX_DISTANCE
