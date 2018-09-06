@@ -301,6 +301,7 @@ enabled = true
 dirname = "/tmp/titandb"
 min-blob-size = 123
 blob-file-compression = "zstd"
+disable-gc = false
 
 [raftdb]
 wal-recovery-mode = 3

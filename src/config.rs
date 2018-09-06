@@ -383,6 +383,7 @@ pub struct TitanDbConfig {
     pub dirname: String,
     pub min_blob_size: u64,
     pub blob_file_compression: CompressionType,
+    pub disable_gc: bool,
 }
 
 impl Default for TitanDbConfig {
@@ -392,6 +393,7 @@ impl Default for TitanDbConfig {
             dirname: "".to_owned(),
             min_blob_size: 4096,
             blob_file_compression: CompressionType::No,
+            disable_gc: true,
         }
     }
 }
@@ -402,7 +404,7 @@ impl TitanDbConfig {
         opts.set_dirname(&self.dirname);
         opts.set_min_blob_size(self.min_blob_size);
         opts.set_blob_file_compression(self.blob_file_compression.into());
-        opts
+        opts.set_disable_background_gc(self.disable_gc);
     }
 }
 
