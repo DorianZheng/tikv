@@ -1095,14 +1095,6 @@ impl<T: RaftStoreRouter + 'static, E: Engine> tikvpb_grpc::Tikv for Service<T, E
 
         ctx.spawn(future);
     }
-
-    fn unsafe_destroy_range(&self,
-                            ctx: RpcContext,
-                            mut req: UnsafeDestroyRangeRequest,
-                            sink: UnarySink<UnsafeDestroyRangeResponse>
-    ) {
-        let region_id = req.get_context().get_region_id();
-    }
 }
 
 fn extract_region_error<T>(res: &storage::Result<T>) -> Option<RegionError> {
