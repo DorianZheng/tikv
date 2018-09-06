@@ -405,6 +405,7 @@ impl TitanDbConfig {
         opts.set_min_blob_size(self.min_blob_size);
         opts.set_blob_file_compression(self.blob_file_compression.into());
         opts.set_disable_background_gc(self.disable_gc);
+        opts
     }
 }
 
