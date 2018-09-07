@@ -221,7 +221,7 @@ fn test_serde_custom_tikv_config() {
             disable_auto_compactions: true,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(12),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(12),
-            titandb: TitanDBOptions::default(),
+            titandb: TitanDbConfig::default(),
         },
         writecf: WriteCfConfig {
             block_size: ReadableSize::kb(12),
@@ -260,7 +260,7 @@ fn test_serde_custom_tikv_config() {
             disable_auto_compactions: true,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(12),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(12),
-            titandb: TitanDBOptions::default(),
+            titandb: TitanDbConfig::default(),
         },
         lockcf: LockCfConfig {
             block_size: ReadableSize::kb(12),
@@ -299,7 +299,7 @@ fn test_serde_custom_tikv_config() {
             disable_auto_compactions: true,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(12),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(12),
-            titandb: TitanDBOptions::default(),
+            titandb: TitanDbConfig::default(),
         },
         raftcf: RaftCfConfig {
             block_size: ReadableSize::kb(12),
@@ -338,7 +338,7 @@ fn test_serde_custom_tikv_config() {
             disable_auto_compactions: true,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(12),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(12),
-            titandb: TitanDBOptions::default(),
+            titandb: TitanDbConfig::default(),
         },
         titandb: TitanDbConfig {
             enabled: true,
@@ -409,7 +409,7 @@ fn test_serde_custom_tikv_config() {
             disable_auto_compactions: true,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(12),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(12),
-            titandb: TitanDBOptions::default(),
+            titandb: TitanDbConfig::default(),
         },
     };
     value.storage = StorageConfig {

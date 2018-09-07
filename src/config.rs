@@ -235,7 +235,7 @@ impl Default for DefaultCfConfig {
             disable_auto_compactions: false,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(64),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(256),
-            titandb: TitanDBOptions::default(),
+            titandb: TitanDbConfig::default(),
         }
     }
 }
@@ -246,7 +246,7 @@ impl DefaultCfConfig {
         let f = Box::new(RangePropertiesCollectorFactory::default());
         cf_opts.add_table_properties_collector_factory("tikv.range-properties-collector", f);
 
-        cf_opts.set_titandb_options(self.titandb.build_opts());
+        cf_opts.set_titandb_options(&self.titandb.build_opts());
 
         cf_opts
     }
@@ -293,7 +293,7 @@ impl Default for WriteCfConfig {
             disable_auto_compactions: false,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(64),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(256),
-            titandb: TitanDBOptions::default(),
+            titandb: TitanDbConfig::default(),
         }
     }
 }
@@ -313,7 +313,7 @@ impl WriteCfConfig {
         cf_opts.add_table_properties_collector_factory("tikv.mvcc-properties-collector", f);
         let f = Box::new(RangePropertiesCollectorFactory::default());
         cf_opts.add_table_properties_collector_factory("tikv.range-properties-collector", f);
-        cf_opts.set_titandb_options(self.titandb.build_opts());
+        cf_opts.set_titandb_options(&self.titandb.build_opts());
         cf_opts
     }
 }
@@ -351,7 +351,7 @@ impl Default for LockCfConfig {
             disable_auto_compactions: false,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(64),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(256),
-            titandb: TitanDBOptions::default(),
+            titandb: TitanDbConfig::default(),
         }
     }
 }
@@ -364,7 +364,7 @@ impl LockCfConfig {
             .set_prefix_extractor("NoopSliceTransform", f)
             .unwrap();
         cf_opts.set_memtable_prefix_bloom_size_ratio(0.1);
-        cf_opts.set_titandb_options(self.titandb.build_opts());
+        cf_opts.set_titandb_options(&self.titandb.build_opts());
         cf_opts
     }
 }
@@ -402,7 +402,7 @@ impl Default for RaftCfConfig {
             disable_auto_compactions: false,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(64),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(256),
-            titandb: TitanDBOptions::default(),
+            titandb: TitanDbConfig::default(),
         }
     }
 }
@@ -415,7 +415,7 @@ impl RaftCfConfig {
             .set_prefix_extractor("NoopSliceTransform", f)
             .unwrap();
         cf_opts.set_memtable_prefix_bloom_size_ratio(0.1);
-        cf_opts.set_titandb_options(self.titandb.build_opts());
+        cf_opts.set_titandb_options(&self.titandb.build_opts());
         cf_opts
     }
 }
@@ -593,7 +593,7 @@ impl Default for RaftDefaultCfConfig {
             disable_auto_compactions: false,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(64),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(256),
-            titandb: TitanDBOptions::default(),
+            titandb: TitanDbConfig::default(),
         }
     }
 }
