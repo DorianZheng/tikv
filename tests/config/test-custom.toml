@@ -182,6 +182,13 @@ disable-auto-compactions = true
 soft-pending-compaction-bytes-limit = "12GB"
 hard-pending-compaction-bytes-limit = "12GB"
 
+[rocksdb.defaultcf.titandb]
+enabled = true
+dirname = "/tmp/titandb"
+min-blob-size = 123
+blob-file-compression = "zstd"
+disable-gc = false
+
 [rocksdb.writecf]
 block-size = "12KB"
 block-cache-size = "12GB"

@@ -74,6 +74,40 @@ fn memory_mb_for_cf(is_raft_db: bool, cf: &str) -> usize {
     size / MB as usize
 }
 
+#[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
+#[serde(default)]
+#[serde(rename_all = "kebab-case")]
+pub struct TitanDbConfig {
+    pub enabled: bool,
+    pub dirname: String,
+    pub min_blob_size: u64,
+    pub blob_file_compression: CompressionType,
+    pub disable_gc: bool,
+}
+
+impl Default for TitanDbConfig {
+    fn default() -> Self {
+        Self {
+            enabled: false,
+            dirname: "".to_owned(),
+            min_blob_size: 4096,
+            blob_file_compression: CompressionType::No,
+            disable_gc: true,
+        }
+    }
+}
+
+impl TitanDbConfig {
+    fn build_opts(&self) -> TitanDBOptions {
+        let mut opts = TitanDBOptions::new();
+        opts.set_dirname(&self.dirname);
+        opts.set_min_blob_size(self.min_blob_size);
+        opts.set_blob_file_compression(self.blob_file_compression.into());
+        opts.set_disable_background_gc(self.disable_gc);
+        opts
+    }
+}
+
 macro_rules! cf_config {
     ($name:ident) => {
         #[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
@@ -111,6 +145,7 @@ macro_rules! cf_config {
             pub disable_auto_compactions: bool,
             pub soft_pending_compaction_bytes_limit: ReadableSize,
             pub hard_pending_compaction_bytes_limit: ReadableSize,
+            pub titandb: TitanDbConfig,
         }
     };
 }
@@ -200,6 +235,7 @@ impl Default for DefaultCfConfig {
             disable_auto_compactions: false,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(64),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(256),
+            titandb: TitanDBOptions::default(),
         }
     }
 }
@@ -209,6 +245,9 @@ impl DefaultCfConfig {
         let mut cf_opts = build_cf_opt!(self);
         let f = Box::new(RangePropertiesCollectorFactory::default());
         cf_opts.add_table_properties_collector_factory("tikv.range-properties-collector", f);
+
+        cf_opts.set_titandb_options(self.titandb.build_opts());
+
         cf_opts
     }
 }
@@ -254,6 +293,7 @@ impl Default for WriteCfConfig {
             disable_auto_compactions: false,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(64),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(256),
+            titandb: TitanDBOptions::default(),
         }
     }
 }
@@ -273,6 +313,7 @@ impl WriteCfConfig {
         cf_opts.add_table_properties_collector_factory("tikv.mvcc-properties-collector", f);
         let f = Box::new(RangePropertiesCollectorFactory::default());
         cf_opts.add_table_properties_collector_factory("tikv.range-properties-collector", f);
+        cf_opts.set_titandb_options(self.titandb.build_opts());
         cf_opts
     }
 }
@@ -310,6 +351,7 @@ impl Default for LockCfConfig {
             disable_auto_compactions: false,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(64),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(256),
+            titandb: TitanDBOptions::default(),
         }
     }
 }
@@ -322,6 +364,7 @@ impl LockCfConfig {
             .set_prefix_extractor("NoopSliceTransform", f)
             .unwrap();
         cf_opts.set_memtable_prefix_bloom_size_ratio(0.1);
+        cf_opts.set_titandb_options(self.titandb.build_opts());
         cf_opts
     }
 }
@@ -359,6 +402,7 @@ impl Default for RaftCfConfig {
             disable_auto_compactions: false,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(64),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(256),
+            titandb: TitanDBOptions::default(),
         }
     }
 }
@@ -371,41 +415,8 @@ impl RaftCfConfig {
             .set_prefix_extractor("NoopSliceTransform", f)
             .unwrap();
         cf_opts.set_memtable_prefix_bloom_size_ratio(0.1);
+        cf_opts.set_titandb_options(self.titandb.build_opts());
         cf_opts
-    }
-}
-
-#[derive(Clone, Serialize, Deserialize, PartialEq, Debug)]
-#[serde(default)]
-#[serde(rename_all = "kebab-case")]
-pub struct TitanDbConfig {
-    pub enabled: bool,
-    pub dirname: String,
-    pub min_blob_size: u64,
-    pub blob_file_compression: CompressionType,
-    pub disable_gc: bool,
-}
-
-impl Default for TitanDbConfig {
-    fn default() -> Self {
-        Self {
-            enabled: false,
-            dirname: "".to_owned(),
-            min_blob_size: 4096,
-            blob_file_compression: CompressionType::No,
-            disable_gc: true,
-        }
-    }
-}
-
-impl TitanDbConfig {
-    fn build_opts(&self) -> TitanDBOptions {
-        let mut opts = TitanDBOptions::new();
-        opts.set_dirname(&self.dirname);
-        opts.set_min_blob_size(self.min_blob_size);
-        opts.set_blob_file_compression(self.blob_file_compression.into());
-        opts.set_disable_background_gc(self.disable_gc);
-        opts
     }
 }
 
@@ -582,6 +593,7 @@ impl Default for RaftDefaultCfConfig {
             disable_auto_compactions: false,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(64),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(256),
+            titandb: TitanDBOptions::default(),
         }
     }
 }

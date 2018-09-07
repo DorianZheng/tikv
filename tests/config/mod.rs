@@ -221,6 +221,7 @@ fn test_serde_custom_tikv_config() {
             disable_auto_compactions: true,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(12),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(12),
+            titandb: TitanDBOptions::default(),
         },
         writecf: WriteCfConfig {
             block_size: ReadableSize::kb(12),
@@ -259,6 +260,7 @@ fn test_serde_custom_tikv_config() {
             disable_auto_compactions: true,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(12),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(12),
+            titandb: TitanDBOptions::default(),
         },
         lockcf: LockCfConfig {
             block_size: ReadableSize::kb(12),
@@ -297,6 +299,7 @@ fn test_serde_custom_tikv_config() {
             disable_auto_compactions: true,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(12),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(12),
+            titandb: TitanDBOptions::default(),
         },
         raftcf: RaftCfConfig {
             block_size: ReadableSize::kb(12),
@@ -335,12 +338,14 @@ fn test_serde_custom_tikv_config() {
             disable_auto_compactions: true,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(12),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(12),
+            titandb: TitanDBOptions::default(),
         },
         titandb: TitanDbConfig {
             enabled: true,
             dirname: "/tmp/titandb".to_owned(),
             min_blob_size: 123,
             blob_file_compression: CompressionType::Zstd,
+            disable_gc: false,
         },
     };
     value.raftdb = RaftDbConfig {
@@ -404,6 +409,7 @@ fn test_serde_custom_tikv_config() {
             disable_auto_compactions: true,
             soft_pending_compaction_bytes_limit: ReadableSize::gb(12),
             hard_pending_compaction_bytes_limit: ReadableSize::gb(12),
+            titandb: TitanDBOptions::default(),
         },
     };
     value.storage = StorageConfig {
