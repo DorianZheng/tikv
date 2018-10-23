@@ -19,4 +19,4 @@ git = "https://github.com/pingcap/kvproto.git"
 
 [dependencies.rocksdb]
 git = "https://github.com/DorianZheng/rust-rocksdb.git"
-branch = "titandb-5.14"
+branch = "titandb-5.15"
