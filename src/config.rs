@@ -389,7 +389,6 @@ cf_config!(RaftCfConfig);
 impl Default for RaftCfConfig {
     fn default() -> RaftCfConfig {
         let mut titandb = TitanDbConfig::default();
-        titandb.blob_cache_size = ReadableSize::mb(memory_mb_for_cf(false, CF_RAFT) as u64);
         RaftCfConfig {
             block_size: ReadableSize::kb(16),
             block_cache_size: ReadableSize::mb(128),
