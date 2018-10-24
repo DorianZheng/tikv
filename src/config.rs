@@ -111,7 +111,7 @@ impl TitanDbConfig {
         opts.set_blob_file_compression(self.blob_file_compression.into());
         opts.set_disable_background_gc(self.disable_gc);
         opts.set_max_background_gc(self.max_background_gc);
-        opts.set_min_blob_size(self.min_gc_batch_size.0 as u64);
+        opts.set_min_gc_batch_size(self.min_gc_batch_size.0 as u64);
         opts.set_blob_cache(self.blob_cache_size.0 as usize, -1, 0, 0.0);
         opts
     }
