@@ -86,6 +86,7 @@ pub struct TitanDbConfig {
     pub max_background_gc: i32,
     pub min_gc_batch_size: ReadableSize,
     pub blob_cache_size: ReadableSize,
+    pub max_gc_batch_size: ReadableSize,
 }
 
 impl Default for TitanDbConfig {
@@ -99,6 +100,7 @@ impl Default for TitanDbConfig {
             max_background_gc: 6,
             min_gc_batch_size: ReadableSize::mb(128),
             blob_cache_size: ReadableSize::mb(memory_mb_for_cf(false, CF_DEFAULT) as u64),
+            max_gc_batch_size: ReadableSize::gb(20),
         }
     }
 }
@@ -113,6 +115,7 @@ impl TitanDbConfig {
         opts.set_max_background_gc(self.max_background_gc);
         opts.set_min_gc_batch_size(self.min_gc_batch_size.0 as u64);
         opts.set_blob_cache(self.blob_cache_size.0 as usize, -1, 0, 0.0);
+        opts.set_max_gc_batch_size(self.max_gc_batch_size.0 as u64);
         opts
     }
 }
