@@ -98,8 +98,8 @@ smallvec = { version = "0.6", features = ["union"] }
 git = "https://github.com/pingcap/murmur3.git"
 
 [dependencies.rocksdb]
-git = "https://github.com/DorianZheng/rust-rocksdb.git"
-branch = "titandb-5.15"
+git = "https://github.com/pingcap/rust-rocksdb.git"
+branch = "titan-test"
 
 [dependencies.kvproto]
 git = "https://github.com/pingcap/kvproto.git"
