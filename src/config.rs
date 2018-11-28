@@ -87,6 +87,9 @@ pub struct TitanDbConfig {
     pub min_gc_batch_size: ReadableSize,
     pub blob_cache_size: ReadableSize,
     pub max_gc_batch_size: ReadableSize,
+    pub discardable_ratio: f64,
+    pub sample_ratio: f64,
+    pub merge_small_file_threshold: ReadableSize,
 }
 
 impl Default for TitanDbConfig {
@@ -101,6 +104,9 @@ impl Default for TitanDbConfig {
             min_gc_batch_size: ReadableSize::mb(128),
             blob_cache_size: ReadableSize::mb(memory_mb_for_cf(false, CF_DEFAULT) as u64),
             max_gc_batch_size: ReadableSize::gb(20),
+            discardable_ratio: 0.5,
+            sample_ratio: 0.1,
+            merge_small_file_threshold: ReadableSize::mb(8),
         }
     }
 }
@@ -116,6 +122,10 @@ impl TitanDbConfig {
         opts.set_min_gc_batch_size(self.min_gc_batch_size.0 as u64);
         opts.set_blob_cache(self.blob_cache_size.0 as usize, -1, 0, 0.0);
         opts.set_max_gc_batch_size(self.max_gc_batch_size.0 as u64);
+        opts.set_discardable_ratio(self.discardable_ratio);
+        opts.set_sample_ratio(self.sample_ratio);
+        opts.set_merge_small_file_threshold(self.merge_small_file_threshold.0 as u64);
+
         opts
     }
 }
