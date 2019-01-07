@@ -118,7 +118,7 @@ impl<Client: ImportClient> PrepareJob<Client> {
     fn run_prepare_job(&self, range: RangeInfo) -> Result<bool> {
         let id = self.counter.fetch_add(1, Ordering::SeqCst);
         let tag = format!("[PrepareRangeJob {}:{}]", self.engine.uuid(), id);
-        let job = PrepareRangeJob::new(tag, range, Arc::clone(&self.client));
+        let job = PrepareRangeJob::new(tag, range, Arc::clone(&self.client), self.cfg.clone());
         job.run()
     }
 }
@@ -127,11 +127,12 @@ struct PrepareRangeJob<Client> {
     tag: String,
     range: RangeInfo,
     client: Arc<Client>,
+    cfg: Config,
 }
 
 impl<Client: ImportClient> PrepareRangeJob<Client> {
-    fn new(tag: String, range: RangeInfo, client: Arc<Client>) -> PrepareRangeJob<Client> {
-        PrepareRangeJob { tag, range, client }
+    fn new(tag: String, range: RangeInfo, client: Arc<Client>, cfg: Config) -> PrepareRangeJob<Client> {
+        PrepareRangeJob { tag, range, client, cfg }
     }
 
     fn run(&self) -> Result<bool> {
@@ -176,6 +177,7 @@ impl<Client: ImportClient> PrepareRangeJob<Client> {
         }
         match self.split_region(&region) {
             Ok(new_region) => {
+                thread::sleep(Duration::from_millis(self.cfg.sleep_before_scatter_ms));
                 self.scatter_region(&new_region)?;
                 Ok(true)
             }
